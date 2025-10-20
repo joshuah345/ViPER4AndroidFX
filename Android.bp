@@ -10,6 +10,7 @@ android_app_import {
     apk: "system/app/ViPER4AndroidFX/ViPER4AndroidFX.apk",
     preprocessed: true,
     presigned: true,
+    required: ["libv4a_re"],
 }
 
 cc_prebuilt_library_shared {
