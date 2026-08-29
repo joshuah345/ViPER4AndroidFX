@@ -1,4 +1,4 @@
-# ViPER4Android FX
+# ViPER4Android FX (WSTxda)
 - Add this in **device.mk**: $(call inherit-product, packages/apps/ViPER4AndroidFX/config.mk)
 
 Add this to your **audio_effects.xml**:
@@ -12,3 +12,6 @@ Also you need to address some SELinux denials in **audioserver.te**:
 
     allow audioserver unlabeled:file { read write open getattr };
     allow hal_audio_default hal_audio_default:process { execmem };
+
+## NOTE
+This version of ViPER4AndroidFX is no longer maintained and will not function on AIDL audio HALs!
