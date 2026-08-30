@@ -11,8 +11,8 @@ import java.lang.reflect.Method
 const val SERVICE_CHANNEL_ID = "viper4android_service"
 const val BULK_OP_CHANNEL_ID = "viper4android_bulk_op"
 
-@HiltAndroidApp
-class ViPER4AndroidApp : Application() {
+@HiltAndroidApp(Application::class)
+class ViPER4AndroidApp : Hilt_ViPER4AndroidApp() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannels()

@@ -9,8 +9,8 @@ import com.llsl.viper4android.ui.navigation.ViperNavigation
 import com.llsl.viper4android.ui.theme.ViperTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+@AndroidEntryPoint(ComponentActivity::class)
+class MainActivity : Hilt_MainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ViperService.startService(this)

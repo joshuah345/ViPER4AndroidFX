@@ -38,8 +38,8 @@ import java.nio.ByteOrder
 import java.util.zip.CRC32
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class ViperService : LifecycleService() {
+@AndroidEntryPoint(LifecycleService::class)
+class ViperService : Hilt_ViperService() {
     @Inject
     lateinit var repository: ViperRepository
 

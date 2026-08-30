@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class MasterTileService : TileService() {
+@AndroidEntryPoint(TileService::class)
+class MasterTileService : Hilt_MasterTileService() {
     @Inject
     lateinit var repository: ViperRepository
 

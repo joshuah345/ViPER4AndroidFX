@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class BootCompletedReceiver : BroadcastReceiver() {
+@AndroidEntryPoint(BroadcastReceiver::class)
+class BootCompletedReceiver : Hilt_BootCompletedReceiver() {
     @Inject
     lateinit var repository: ViperRepository
 
