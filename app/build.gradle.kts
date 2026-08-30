@@ -26,7 +26,7 @@ android {
     }
 
     androidResources {
-        generateLocaleConfig = true
+        localeFilters += setOf("en", "ru", "zh-rCN")
     }
 
     val keystoreFile = localProps.getProperty("KEYSTORE_FILE", "")
