@@ -103,6 +103,4 @@ dependencies {
     implementation(libs.datastore.preferences)
 
     implementation(libs.coroutines.android)
-
-    implementation(libs.okhttp)
 }

@@ -41,9 +41,6 @@ import com.llsl.viper4android.effect.saveEffectPrefs
 import com.llsl.viper4android.effect.serializeEffectPrefs
 import com.llsl.viper4android.service.ViperService
 import com.llsl.viper4android.utils.FileLogger
-import com.llsl.viper4android.utils.ReleaseInfo
-import com.llsl.viper4android.utils.UpdateChecker
-import com.llsl.viper4android.utils.UpdateResult
 import com.llsl.viper4android.viper.ConfigChannel
 import com.llsl.viper4android.viper.ViperEffect
 import com.llsl.viper4android.viper.ViperParams
@@ -66,7 +63,6 @@ import java.io.FileOutputStream
 import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
 
 data class DriverStatus(
     val installed: Boolean = false,
@@ -77,15 +73,6 @@ data class DriverStatus(
     val samplingRate: Int = 0,
 )
 
-data class UpdateState(
-    val checking: Boolean = false,
-    val downloading: Boolean = false,
-    val downloadProgress: Int = 0,
-    val release: ReleaseInfo? = null,
-    val upToDate: Boolean = false,
-    val error: String? = null,
-)
-
 @Suppress("StaticFieldLeak")
 @HiltViewModel
 class MainViewModel
@@ -93,7 +80,6 @@ class MainViewModel
     constructor(
         application: Application,
         private val repository: ViperRepository,
-        private val updateChecker: UpdateChecker,
     ) : AndroidViewModel(application) {
         companion object {
             private const val NOTIFY_ID_PRESET_IMPORT = 2
@@ -133,9 +119,6 @@ class MainViewModel
 
         val debugModeEnabled: StateFlow<Boolean>
             field: MutableStateFlow<Boolean> = MutableStateFlow(false)
-
-        val updateState: StateFlow<UpdateState>
-            field: MutableStateFlow<UpdateState> = MutableStateFlow(UpdateState())
 
         private var viperService: ViperService? = null
         private var serviceBound = false
@@ -189,6 +172,7 @@ class MainViewModel
         }
 
         override fun onCleared() {
+            super.onCleared()
             runBlocking(Dispatchers.IO) { saveCurrentDeviceSettings() }
             audioOutputDetector.stop()
             if (serviceBound) {
@@ -952,61 +936,6 @@ class MainViewModel
             viewModelScope.launch { saveCurrentDeviceSettings() }
         }
 
-        fun checkForUpdate() {
-            val current =
-                try {
-                    val app = getApplication<Application>()
-                    app.packageManager.getPackageInfo(app.packageName, 0).versionName ?: ""
-                } catch (_: Exception) {
-                    ""
-                }
-            updateState.value = UpdateState(checking = true)
-            viewModelScope.launch {
-                when (val result = updateChecker.check(current)) {
-                    is UpdateResult.Available -> {
-                        updateState.value = UpdateState(release = result.release)
-                    }
-
-                    is UpdateResult.UpToDate -> {
-                        updateState.value = UpdateState(release = result.release, upToDate = true)
-                    }
-
-                    is UpdateResult.Error -> {
-                        updateState.value = UpdateState(error = result.message)
-                    }
-                }
-            }
-        }
-
-        fun downloadAndInstall(
-            release: ReleaseInfo,
-            onNoAsset: () -> Unit,
-        ) {
-            if (release.apkUrl == null) {
-                onNoAsset()
-                return
-            }
-            updateState.update { it.copy(downloading = true, downloadProgress = 0) }
-            viewModelScope.launch {
-                val apk =
-                    updateChecker.download(release) { progress ->
-                        updateState.update { it.copy(downloadProgress = progress) }
-                    }
-                if (apk != null) {
-                    updateState.update { it.copy(downloading = false) }
-                    updateChecker.install(apk)
-                } else {
-                    updateState.update {
-                        it.copy(downloading = false, error = "download failed")
-                    }
-                }
-            }
-        }
-
-        fun dismissUpdate() {
-            updateState.value = UpdateState()
-        }
-
         fun renameDevice(
             deviceId: String,
             name: String,
@@ -1079,7 +1008,7 @@ class MainViewModel
             title: String,
             content: String,
         ) {
-            delay(PROGRESS_DRAIN_DELAY_MS.milliseconds)
+            delay(PROGRESS_DRAIN_DELAY_MS)
             lastBulkProgressNotifyMs.remove(notificationId)
             val app = getApplication<Application>()
             val nm = app.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
