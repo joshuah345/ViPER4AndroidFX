@@ -1,0 +1,62 @@
+android_app {
+    name: "ViPER4AndroidFX",
+    privileged: true,
+    system_ext_specific: true,
+    manifest: "src/main/AndroidManifest.xml",
+    srcs: [
+        "src/main/java/**/*.java",
+        "src/main/java/**/*.kt"
+    ],
+
+    sdk_version: "current",
+    min_sdk_version: "28",
+    target_sdk_version: "37",
+    plugins: ["androidx.room_room-compiler-plugin"],
+
+    static_libs: [
+        "androidx.compose.runtime_runtime",
+        "androidx.compose.ui_ui",
+        "androidx.compose.ui_ui-tooling-preview",
+        "androidx.compose.material3_material3",
+        "androidx.compose.material_material-icons-extended",
+        "androidx.activity_activity-compose",
+        "androidx.lifecycle_lifecycle-runtime-compose",
+        "androidx.lifecycle_lifecycle-viewmodel-compose",
+        "androidx.lifecycle_lifecycle-service",
+        "androidx.navigation_navigation-compose",
+        "androidx.room_room-runtime",
+        "androidx.room_room-ktx",
+        "androidx.datastore_datastore-preferences",
+        "kotlinx-coroutines-android",
+        "hilt_android",
+        "androidx.hilt_hilt-navigation-compose"
+    ],
+
+    kotlincflags: [
+        "-Xjvm-default=all",
+        "-XXLanguage:+ExplicitBackingFields",
+        "-Xcontext-parameters",
+    ],
+
+    resource_dirs: ["src/main/res"],
+
+    required: [
+        "libv4a_driver", 
+        "init.viper.rc",
+        "privapp-permissions-viper4android.xml"
+    ],
+
+    optimize: {
+        enabled: true,
+        shrink: true,
+        shrink_resources: true,
+        proguard_flags_files: ["proguard-rules.pro"],
+    },
+}
+
+prebuilt_etc {
+    name: "privapp-permissions-viper4android.xml",
+    src: "privapp-permissions-viper4android.xml",
+    sub_dir: "permissions",
+    system_ext_specific: true,
+}

@@ -1,0 +1,7 @@
+<!-- /system/etc/permissions/privapp-permissions-viper4android.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<permissions>
+    <privapp-permissions package="com.llsl.viper4android">
+        <permission name="android.permission.MODIFY_AUDIO_ROUTING"/>
+    </privapp-permissions>
+</permissions>

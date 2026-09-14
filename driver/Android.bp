@@ -1,0 +1,38 @@
+cc_defaults {
+    name: "libv4a_defaults",
+    owner: "viper",
+    strip: {
+        none: true,
+    },
+    compile_multilib: "both",
+    vendor: true,
+    relative_install_path: "soundfx",
+    shared_libs: [
+        "liblog",
+        "libbinder_ndk", 
+        "libbase", 
+        "libfmq", 
+        "libcutils", 
+        "libm", 
+        "libdl", 
+        "libc"
+    ],
+}
+
+phony {
+    name: "libv4a_driver",
+    required: ["lib4a_re_legacy"],
+}
+
+cc_prebuilt_library_shared {
+    name: "libv4a_re_legacy",
+    defaults: ["libv4a_defaults"],
+    target: {
+        android_arm64: {
+            srcs: ["legacy/vendor/lib64/soundfx/libv4a_re.so"],
+        },
+        android_arm: {
+            srcs: ["legacy/vendor/lib/soundfx/libv4a_re.so"],
+        },
+    },
+}
